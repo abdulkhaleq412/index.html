@@ -15,20 +15,20 @@
       position: relative;
     }
     body::before {
-  content: "";
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-image: url('https://raw.githubusercontent.com/abdulkhaleq404/housing-system/refs/heads/main/logopng2.png');
-  background-size: 550px;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.25;
-  z-index: -1;
-  width: 600px;
-  height: 600px;
-}
+      content: "";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-image: url('https://raw.githubusercontent.com/abdulkhaleq404/housing-system/refs/heads/main/logopng2.png');
+      background-size: 550px;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.25;
+      z-index: -1;
+      width: 600px;
+      height: 600px;
+    }
     * {
       position: relative;
       z-index: 1;
@@ -166,8 +166,8 @@
 </head>
 <body>
   <div style="position: fixed; top: 10px; left: 10px; z-index: 999;">
-  <img src="https://raw.githubusercontent.com/abdulkhaleq404/housing-system/refs/heads/main/logopng3.png" alt="شعار" style="max-width: 160px; height: auto; margin: 0;">
-</div>
+    <img src="https://raw.githubusercontent.com/abdulkhaleq404/housing-system/refs/heads/main/logopng3.png" alt="شعار" style="max-width: 160px; height: auto; margin: 0;">
+  </div>
   <h1>فـلـل مـقـر الـشـالـيـهـات</h1>
 
   <div class="container" id="mainScreen">
@@ -196,8 +196,6 @@
     </div>
     <textarea id="reportBox" readonly></textarea>
   </div>
-
-
 
 
 <script>
@@ -298,14 +296,14 @@ function showForm(roomNumber, guests) {
             ${['إدارة مكافحة الإرهاب','إدارة السجون','إدارة الهندسية','إدارة التموين'].map(op => `<option value="${op}" ${data.admin === op ? 'selected' : ''}>${op}</option>`).join('')}
           </select>` : ''}
         <input type="text" placeholder="الإسم" value="${data.name||''}" oninput="updateGuest('${key}', this, 'name')">
-        <input type="tel" placeholder="رقم التواصل" maxlength="10" value="${data.phone||''}" oninput="updateGuest('${key}', this, 'phone')}">
+        <input type="tel" placeholder="رقم التواصل" maxlength="10" value="${data.phone||''}" oninput="updateGuest('${key}', this, 'phone')">
         <select onchange="updateGuest('${key}', this, 'rank')">
           <option value="">الرتبة</option>
           ${['جندي','جندي أول','عريف','وكيل رقيب','رقيب','رقيب أول','رئيس رقباء','ملازم','ملازم أول','نقيب','رائد','مقدم','عقيد','عميد','لواء'].map(r => `<option value="${r}" ${data.rank === r ? 'selected' : ''}>${r}</option>`).join('')}
         </select>
-        <input type="text" placeholder="رقم اللوحة" value="${data.plate||''}" oninput="updateGuest('${key}', this, 'plate')}">
-        <input type="date" value="${data.inDate||''}" onchange="updateGuest('${key}', this, 'inDate')}">
-        <input type="date" value="${data.outDate||''}" onchange="updateGuest('${key}', this, 'outDate')}">
+        <input type="text" placeholder="رقم اللوحة" value="${data.plate||''}" oninput="updateGuest('${key}', this, 'plate')">
+        <input type="date" value="${data.inDate||''}" onchange="updateGuest('${key}', this, 'inDate')">
+        <input type="date" value="${data.outDate||''}" onchange="updateGuest('${key}', this, 'outDate')">
       </div>`;
     grid.appendChild(card);
   }
@@ -445,3 +443,5 @@ function searchRooms() {
   });
 }
 </script>
+</body>
+</html>
