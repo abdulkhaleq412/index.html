@@ -223,7 +223,6 @@
 
 
 
-
 <script>
 let guestsData = JSON.parse(localStorage.getItem('guestsData') || '{}');
 let currentType = '', currentVilla = '', currentRoom = '';
@@ -322,6 +321,10 @@ function showForm(roomNumber, guests) {
         <select onchange="updateGuest('${key}', this, 'rank')">
           <option value="">الرتبة</option>
           ${['جندي','جندي أول','عريف','وكيل رقيب','رقيب','رقيب أول','رئيس رقباء','ملازم','ملازم أول','نقيب','رائد','مقدم','عقيد','عميد','لواء'].map(r => `<option value="${r}" ${data.rank === r ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+        <select onchange="updateGuest('${key}', this, 'grade')">
+          <option value="">المرتبة</option>
+          ${Array.from({length: 14}, (_, i) => i+1).map(n => `<option value="${n}" ${data.grade == n ? 'selected' : ''}>${n}</option>`).join('')}
         </select>
         <input type="text" placeholder="رقم اللوحة" value="${data.plate||''}" oninput="updateGuest('${key}', this, 'plate')">
         <input type="date" value="${data.inDate||''}" onchange="updateGuest('${key}', this, 'inDate')">
@@ -470,11 +473,11 @@ function showAllRooms() {
                 <option value="">الرتبة</option>
                 ${['جندي','جندي أول','عريف','وكيل رقيب','رقيب','رقيب أول','رئيس رقباء','ملازم','ملازم أول','نقيب','رائد','مقدم','عقيد','عميد','لواء'].map(r => `<option value="${r}" ${d.rank === r ? 'selected' : ''}>${r}</option>`).join('')}
               </select>
-              ${type === 'M' ? `
               <select onchange="updateGuest('${key}', this, 'grade')">
                 <option value="">المرتبة</option>
-                ${Array.from({length:14}, (_,i)=>i+1).map(n => `<option value="${n}" ${d.grade==n ? 'selected' : ''}>${n}</option>`).join('')}
+                ${Array.from({length: 14}, (_, i) => i+1).map(n => `<option value="${n}" ${d.grade == n ? 'selected' : ''}>${n}</option>`).join('')}
               </select>
+              ${type === 'M' ? `
               <input type="text" placeholder="الإدارة" value="${d.admin||''}" oninput="updateGuest('${key}', this, 'admin')}">
               <input type="text" placeholder="المهمة" value="${d.task||''}" oninput="updateGuest('${key}', this, 'task')}">` : ''}
               <input type="text" placeholder="رقم اللوحة" value="${d.plate||''}" oninput="updateGuest('${key}', this, 'plate')}">
