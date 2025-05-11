@@ -260,7 +260,7 @@ function showVillas(type) {
   villaMap[type].forEach(i => {
     const card = document.createElement('div');
     card.className = 'card';
-    const dotCount = type === 'M' ? 20 : 5;
+    const dotCount = type === 'M' ? 5 : 5;
     card.innerHTML = `فـلـة | ${i}<div class="status-dots" id="dots-villa${type}${i}">${'<span class="dot"></span>'.repeat(dotCount)}</div>`;
     card.onclick = () => {
       currentVilla = i;
@@ -287,7 +287,7 @@ function showRooms(villaNumber) {
   <div class="card-grid-flex"></div>`;
   const grid = screen.querySelector('.card-grid-flex');
   for (let i = 1; i <= 5; i++) {
-    const guests = (i === 1 || i === 5) ? 2 : 1;
+    const guests = currentType === 'V' ? 1 : (i === 1 || i === 5) ? 2 : 1;
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `غـرفـة | ${i}<div class="status-dots" id="dots-room${i}">${'<span class="dot"></span>'.repeat(guests)}</div>`;
@@ -342,10 +342,77 @@ function showFormM(villaNumber) {
     <div class="top-card" onclick="goHome()">الـصـفـحـة الـرئـيـسـيـة</div>
     <div class="top-card small" onclick="showVillas('M')">الـعـودة</div>
   </div>
+  <div class="card-grid-flex" id="mCards"></div>`;
+  const grid = document.getElementById('mCards');
+
+  // Add coordinator card
+  const coordinatorCard = document.createElement('div');
+  coordinatorCard.className = 'card';
+  coordinatorCard.innerHTML = 'الـمـنـسـق';
+  coordinatorCard.onclick = () => {
+    showCoordinatorForm(villaNumber);
+  };
+  grid.appendChild(coordinatorCard);
+
+  // Add 5 room cards
+  for (let room = 1; room <= 5; room++) {
+    const roomCard = document.createElement('div');
+    roomCard.className = 'card';
+    roomCard.innerHTML = `غـرفـة | ${room}`;
+    roomCard.onclick = () => {
+      showMRoomForm(villaNumber, room);
+    };
+    grid.appendChild(roomCard);
+  }
+}
+
+function showCoordinatorForm(villaNumber) {
+  hideAll();
+  const screen = document.getElementById('formScreen');
+  screen.classList.remove('hidden');
+  screen.innerHTML = `<div class="top-bar">
+    <div class="top-card" onclick="goHome()">الـصـفـحـة الـرئـيـسـيـة</div>
+    <div class="top-card small" onclick="showFormM(${villaNumber})">الـعـودة</div>
+  </div>
   <div class="card-grid-flex"></div>`;
   const grid = screen.querySelector('.card-grid-flex');
-  for (let i = 1; i <= 20; i++) {
-    const key = `villaM${villaNumber}-room1-guest${i}`;
+  const key = `villaM${villaNumber}-coordinator`;
+  const data = guestsData[key] || {};
+  const card = document.createElement('div');
+  card.className = 'guest-card';
+  card.innerHTML = `
+    <h3>الـمـنـسـق</h3>
+    <div class="guest-form" style="display:block;">
+      <input type="text" placeholder="الإسم" value="${data.name||''}" oninput="updateGuest('${key}', this, 'name')">
+      <input type="tel" placeholder="رقم التواصل" maxlength="10" value="${data.phone||''}" oninput="updateGuest('${key}', this, 'phone')">
+      <select onchange="updateGuest('${key}', this, 'rank')">
+        <option value="">الرتبة</option>
+        ${['جندي','جندي أول','عريف','وكيل رقيب','رقيب','رقيب أول','رئيس رقباء','ملازم','ملازم أول','نقيب','رائد','مقدم','عقيد','عميد','لواء'].map(r => `<option value="${r}" ${data.rank === r ? 'selected' : ''}>${r}</option>`).join('')}
+      </select>
+      <select onchange="updateGuest('${key}', this, 'grade')">
+        <option value="">المرتبة</option>
+        ${Array.from({length: 14}, (_, i) => i+1).map(n => `<option value="${n}" ${data.grade == n ? 'selected' : ''}>${n}</option>`).join('')}
+      </select>
+      <input type="text" placeholder="الإدارة" value="${data.admin||''}" oninput="updateGuest('${key}', this, 'admin')">
+      <input type="text" placeholder="المهمة" value="${data.task||''}" oninput="updateGuest('${key}', this, 'task')">
+      <input type="date" value="${data.inDate||''}" onchange="updateGuest('${key}', this, 'inDate')">
+      <input type="date" value="${data.outDate||''}" onchange="updateGuest('${key}', this, 'outDate')">
+    </div>`;
+  grid.appendChild(card);
+}
+
+function showMRoomForm(villaNumber, roomNumber) {
+  hideAll();
+  const screen = document.getElementById('formScreen');
+  screen.classList.remove('hidden');
+  screen.innerHTML = `<div class="top-bar">
+    <div class="top-card" onclick="goHome()">الـصـفـحـة الـرئـيـسـيـة</div>
+    <div class="top-card small" onclick="showFormM(${villaNumber})">الـعـودة</div>
+  </div>
+  <div class="card-grid-flex"></div>`;
+  const grid = screen.querySelector('.card-grid-flex');
+  for (let i = 1; i <= 4; i++) {
+    const key = `villaM${villaNumber}-room${roomNumber}-guest${i}`;
     const data = guestsData[key] || {};
     const card = document.createElement('div');
     card.className = 'guest-card';
@@ -362,8 +429,7 @@ function showFormM(villaNumber) {
           <option value="">المرتبة</option>
           ${Array.from({length: 14}, (_, i) => i+1).map(n => `<option value="${n}" ${data.grade == n ? 'selected' : ''}>${n}</option>`).join('')}
         </select>
-        <input type="text" placeholder="الإدارة" value="${data.admin||''}" oninput="updateGuest('${key}', this, 'admin')">
-        <input type="text" placeholder="المهمة" value="${data.task||''}" oninput="updateGuest('${key}', this, 'task')">
+        <input type="text" placeholder="رقم اللوحة" value="${data.plate||''}" oninput="updateGuest('${key}', this, 'plate')">
         <input type="date" value="${data.inDate||''}" onchange="updateGuest('${key}', this, 'inDate')">
         <input type="date" value="${data.outDate||''}" onchange="updateGuest('${key}', this, 'outDate')">
       </div>`;
@@ -415,26 +481,37 @@ function generateReport() {
   const date = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
   const day = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"][now.getDay()];
   let report = `تقرير فلل الشاليهات\nالتاريخ | ${date}\nاليوم | ${day}\nالساعة | ${time}\n\n`;
-  const guestsList = Object.entries(guestsData)
-    .filter(([_, data]) => data && data.name && data.name.trim())
-    .map(([key, data]) => {
+
+  const grouped = {};
+
+  Object.entries(guestsData).forEach(([key, data]) => {
+    if (data && data.name && data.name.trim()) {
       const m = key.match(/^villa([ABMV])(\d+)-room(\d+)-guest(\d+)/);
-      return m ? {type: m[1], villa: +m[2], room: +m[3], guest: +m[4], ...data} : null;
-    }).filter(Boolean)
-    .sort((a, b) => a.type.localeCompare(b.type) || a.villa - b.villa || a.room - b.room);
-  for (const g of guestsList) {
-    report += `• فلة | ${g.type}${g.villa} - غـ ${g.room}\n`;
-    report += `الإسم: ${g.name}\n`;
-    if (g.phone) report += `الرقم: ${g.phone}\n`;
-    if (g.rank) report += `الرتبة: ${g.rank}\n`;
-    if (g.grade) report += `المرتبة: ${g.grade}\n`;
-    if (g.admin) report += `الإدارة: ${g.admin}\n`;
-    if (g.task) report += `المهمة: ${g.task}\n`;
-    if (g.plate) report += `رقم اللوحة: ${g.plate}\n`;
-    if (g.inDate) report += `تاريخ الدخول: ${g.inDate.replace(/-/g,'/')}\n`;
-    if (g.outDate) report += `تاريخ الخروج: ${g.outDate.replace(/-/g,'/')}\n`;
-    report += `\n`;
-  }
+      if (m) {
+        const groupKey = `فلة | ${m[1]}${m[2]} - غـ ${m[3]}`;
+        grouped[groupKey] = grouped[groupKey] || [];
+        grouped[groupKey].push({...data});
+      }
+    }
+  });
+
+  Object.keys(grouped).sort().forEach(group => {
+    report += `• ${group}\n`;
+    grouped[group].forEach((g, idx) => {
+      report += `الـضـيـف | ${idx + 1}\n`;
+      report += `الاسم: ${g.name}\n`;
+      if (g.phone) report += `الرقم: ${g.phone}\n`;
+      if (g.rank) report += `الرتبة: ${g.rank}\n`;
+      if (g.grade) report += `المرتبة: ${g.grade}\n`;
+      if (g.admin) report += `الإدارة: ${g.admin}\n`;
+      if (g.task) report += `المهمة: ${g.task}\n`;
+      if (g.plate) report += `رقم اللوحة: ${g.plate}\n`;
+      if (g.inDate) report += `تاريخ الدخول: ${g.inDate.replace(/-/g,'/')}\n`;
+      if (g.outDate) report += `تاريخ الخروج: ${g.outDate.replace(/-/g,'/')}\n`;
+      report += `\n`;
+    });
+  });
+
   document.getElementById('reportBox').value = report;
 }
 
@@ -458,10 +535,18 @@ function showAllRooms() {
     villas.forEach(villa => {
       const maxRoom = type === 'M' ? 1 : 5;
       for (let r = 1; r <= maxRoom; r++) {
-        const guests = type === 'M' ? 20 : (r === 1 || r === 5) ? 2 : 1;
+        const guests = type === 'M' ? 4 : (r === 1 || r === 5) ? 2 : 1;
         const card = document.createElement('div');
         card.className = 'guest-card';
         let form = '';
+        let hasData = false;
+        for (let g = 1; g <= guests; g++) {
+          const key = `villa${type}${villa}-room${r}-guest${g}`;
+          const d = guestsData[key];
+          if (d && d.name && d.name.trim()) hasData = true;
+        }
+        if (!hasData) return;
+
         for (let g = 1; g <= guests; g++) {
           const key = `villa${type}${villa}-room${r}-guest${g}`;
           const d = guestsData[key] || {};
